@@ -13,7 +13,7 @@ let lastBlockSnapshot = 0;
 let lastCounterRand = 0;
 let counterRand = 0;
 
-//const db = new Database("./sql.db"); // on-disk db for debugging
+//const db = new Database('./sql.db'); // on-disk db for debugging
 const db = new Database(":memory:");
 
 export function insertSQL(handle: string, clearText: bigint, replace: boolean = false) {
