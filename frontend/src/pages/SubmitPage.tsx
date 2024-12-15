@@ -1,29 +1,34 @@
 import React, { useState, FormEvent } from 'react';
 
-// Define the form data interface
+// Define the interface for the form data
 interface FormData {
-  title: string;
-  description: string;
-  isImportant: boolean;
+  price: string;
+  isExperience: string;
 }
 
-const SubmitPage: React.FC = () => {
-  // Initialize state with the FormData interface
+const SubmitForm: React.FC = () => {
+  // Initial form data state
   const [formData, setFormData] = useState<FormData>({
-    title: '',
-    description: '',
-    isImportant: false
+    price: '',
+    isExperience: '',
   });
 
-  // State for handling error messages
+  // Error message state
   const [error, setError] = useState<string>('');
 
-  // Handle input changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value, type, checked } = e.target;
+  // Handle input text change
+  const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
-      [name]: type === 'checkbox' ? checked : value
+      price: e.target.value,
+    });
+  };
+
+  // Handle radio button change
+  const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      isExperience: e.target.value,
     });
   };
 
@@ -32,8 +37,8 @@ const SubmitPage: React.FC = () => {
     e.preventDefault();
 
     // Basic validation
-    if (!formData.title || !formData.description) {
-      setError('Please fill in all fields.');
+    if (!formData.price || !formData.isExperience) {
+      setError('All fields are required!');
       return;
     }
 
@@ -41,62 +46,79 @@ const SubmitPage: React.FC = () => {
     alert('Form submitted successfully!');
     console.log(formData);
 
-    // Clear form
+    // Reset form fields after submission
     setFormData({
-      title: '',
-      description: '',
-      isImportant: false
+      price: '',
+      isExperience: '',
     });
   };
 
   return (
-    <div style={{ margin: '20px' }}>
-      <h1>Submit Your Entry</h1>
-      <form onSubmit={handleSubmit} style={{ margin: '20px 0' }}>
+    <div style={{ maxWidth: '400px', margin: '0 auto', padding: '20px', border: '1px solid #ccc' }}>
+      <h1>Submit Form</h1>
+      <form onSubmit={handleSubmit}>
+        {/* Text input field */}
         <div style={{ marginBottom: '10px' }}>
-          <label htmlFor="title" style={{ display: 'block', marginBottom: '5px' }}>Title:</label>
+          <label htmlFor="price">Enter Price:</label>
           <input
             type="text"
-            id="title"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            style={{ width: '100%', padding: '8px' }}
+            id="price"
+            name="price"
+            value={formData.price}
+            onChange={handleTextChange}
+            placeholder="Type something"
+            style={{ width: '100%', padding: '8px', marginTop: '5px' }}
           />
         </div>
 
+        {/* Radio button options */}
         <div style={{ marginBottom: '10px' }}>
-          <label htmlFor="description" style={{ display: 'block', marginBottom: '5px' }}>Description:</label>
-          <textarea
-            id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            rows={5}
-            style={{ width: '100%', padding: '8px' }}
-          />
+          <label>Do the entity experience in similar projects in the past?:</label>
+          <div>
+            <label style={{ marginRight: '10px' }}>
+              <input
+                type="radio"
+                name="option"
+                value="Yes"
+                checked={formData.isExperience === 'Yes'}
+                onChange={handleRadioChange}
+              />
+              Yes
+            </label>
+            <label style={{ marginRight: '10px' }}>
+              <input
+                type="radio"
+                name="option"
+                value="No"
+                checked={formData.isExperience === 'No'}
+                onChange={handleRadioChange}
+              />
+              No
+            </label>
+          </div>
         </div>
 
-        <div style={{ marginBottom: '10px' }}>
-          <label>
-            <input
-              type="checkbox"
-              name="isImportant"
-              checked={formData.isImportant}
-              onChange={handleChange}
-            />
-            Mark as important
-          </label>
-        </div>
-
+        {/* Error message */}
         {error && <p style={{ color: 'red' }}>{error}</p>}
 
-        <button type="submit" style={{ padding: '10px 20px', backgroundColor: '#4CAF50', color: 'white', border: 'none', cursor: 'pointer' }}>
-          Submit
-        </button>
+        {/* Submit button */}
+        <div>
+          <button
+            type="submit"
+            style={{
+              padding: '10px 20px',
+              backgroundColor: '#4CAF50',
+              color: '#fff',
+              border: 'none',
+              cursor: 'pointer',
+            }}
+          >
+            Submit
+          </button>
+        </div>
       </form>
     </div>
   );
 };
 
-export default SubmitPage;
+export default SubmitForm;
