@@ -1,41 +1,23 @@
-import { useEffect, useState } from 'react';
-import { Devnet } from './components/Devnet';
-import { init } from './fhevmjs';
-import './App.css';
-import { Connect } from './components/Connect';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LateralMenu from './components/LateralMenu';
+import SubmitPage from './pages/SubmitPage';
+import ListPage from './pages/ListPage';
 
-function App() {
-  const [isInitialized, setIsInitialized] = useState(false);
-
-  useEffect(() => {
-    init()
-      .then(() => {
-        setIsInitialized(true);
-      })
-      .catch(() => setIsInitialized(false));
-  }, []);
-
-  if (!isInitialized) return null;
-
+const App: React.FC = () => {
   return (
-    <>
-      <h1>Confidential ERC20 dApp</h1>
-      <Connect>
-        {(account, provider, readOnlyProvider) => (
-          <Devnet
-            account={account}
-            provider={provider}
-            readOnlyProvider={readOnlyProvider}
-          />
-        )}
-      </Connect>
-      <p className="read-the-docs">
-        <a href="https://docs.zama.ai/fhevm">
-          See the documentation for more information
-        </a>
-      </p>
-    </>
+    <Router>
+      <div style={{ display: 'flex' }}>
+        <LateralMenu />
+        <main style={{ flex: 1, padding: '10px' }}>
+          <Routes>
+            <Route path="/" element={<SubmitPage />} />
+            <Route path="/list" element={<ListPage />} />
+          </Routes>
+        </main>
+      </div>
+    </Router>
   );
-}
+};
 
 export default App;

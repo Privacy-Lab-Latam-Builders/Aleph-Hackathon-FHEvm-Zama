@@ -1,6 +1,8 @@
-# fhevm-react-template
+# CONPRO
 
-This is an example dApp made with React.js to let users do transfers of a `ConfidentialERC20` token on fhEVM. It contains also a button to request the decryption of an encrypted secret value.
+This is our MVP of the CONPRO project who is participating in Aleph's Summer Hackathon.
+
+CONPRO is an example of unleash the potential of Fully Homomorphic Encryption (FHE) and build a groundbreaking dApp using Zama's fhEVM. 
 
 ## How to use this repo
 
