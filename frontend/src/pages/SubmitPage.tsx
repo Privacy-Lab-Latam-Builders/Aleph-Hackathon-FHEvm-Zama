@@ -1,4 +1,6 @@
 import React, { useState, FormEvent } from 'react';
+import { useWalletClient } from 'wagmi';
+import { getConproContract } from '../utils';
 
 // Define the interface for the form data
 interface FormData {
@@ -15,6 +17,8 @@ const SubmitForm: React.FC = () => {
 
   // Error message state
   const [error, setError] = useState<string>('');
+
+  const {data: walletClient} = useWalletClient();
 
   // Handle input text change
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,8 +37,12 @@ const SubmitForm: React.FC = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (!walletClient) {
+      setError('Please connect your wallet first!');
+      return;
+    }
 
     // Basic validation
     if (!formData.price || !formData.isExperience) {
@@ -44,7 +52,14 @@ const SubmitForm: React.FC = () => {
 
     setError('');
     alert('Form submitted successfully!');
-    console.log(formData);
+    const conproContract = getConproContract(walletClient);
+    
+    try {
+      await conproContract.write.submitBid([formData.price, formData.isExperience]);
+    } catch (error) {
+      console.error('Error submitting bid:', error);
+      
+    }
 
     // Reset form fields after submission
     setFormData({
