@@ -4,14 +4,14 @@ import { getConproContract } from '../utils';
 
 // Define the interface for the form data
 interface FormData {
-  price: string;
+  price: number;
   isExperience: string;
 }
 
 const SubmitForm: React.FC = () => {
   // Initial form data state
   const [formData, setFormData] = useState<FormData>({
-    price: '',
+    price: 0,
     isExperience: '',
   });
 
@@ -24,7 +24,7 @@ const SubmitForm: React.FC = () => {
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
-      price: e.target.value,
+      price: parseInt(e.target.value),
     });
   };
 
@@ -50,20 +50,20 @@ const SubmitForm: React.FC = () => {
       return;
     }
 
-    setError('');
-    alert('Form submitted successfully!');
     const conproContract = getConproContract(walletClient);
     
     try {
       await conproContract.write.submitBid([formData.price, formData.isExperience]);
+      setError('');
+      alert('Form submitted successfully!');
     } catch (error) {
       console.error('Error submitting bid:', error);
-      
+      setError('Error submitting bid. Please try again.');
     }
 
     // Reset form fields after submission
     setFormData({
-      price: '',
+      price: 0,
       isExperience: '',
     });
   };
@@ -76,7 +76,7 @@ const SubmitForm: React.FC = () => {
         <div style={{ marginBottom: '10px' }}>
           <label htmlFor="price">Enter Price:</label>
           <input
-            type="text"
+            type="number"
             id="price"
             name="price"
             value={formData.price}
