@@ -42,24 +42,24 @@ export const Devnet = ({
     const loadData = async () => {
       try {
         // Conditional import based on MOCKED environment variable
-        let MyConfidentialERC20;
+        let ConfidentialProcurement;
         if (!import.meta.env.MOCKED) {
-          MyConfidentialERC20 = await import(
-            '@deployments/sepolia/MyConfidentialERC20.json'
+          ConfidentialProcurement = await import(
+            '@deployments/sepolia/ConfidentialProcurement.json'
           );
           console.log(
-            `Using ${MyConfidentialERC20.address} for the token address on Sepolia`,
+            `Using ${ConfidentialProcurement.address} for the token address on Sepolia`,
           );
         } else {
-          MyConfidentialERC20 = await import(
-            '@deployments/localhost/MyConfidentialERC20.json'
+          ConfidentialProcurement = await import(
+            '@deployments/localhost/ConfidentialProcurement.json'
           );
           console.log(
-            `Using ${MyConfidentialERC20.address} for the token address on Hardhat Local Node`,
+            `Using ${ConfidentialProcurement.address} for the token address on Hardhat Local Node`,
           );
         }
 
-        setContractAddress(MyConfidentialERC20.address);
+        setContractAddress(ConfidentialProcurement.address);
       } catch (error) {
         console.error(
           'Error loading data - you probably forgot to deploy the token contract before running the front-end server:',

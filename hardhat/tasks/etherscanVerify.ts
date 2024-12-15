@@ -2,7 +2,7 @@ import { task } from "hardhat/config";
 
 task("verify-deployed", "Verifies an already deployed contract on Etherscan")
   .addParam("address", "The contract's address")
-  .addParam("contract", "Full contract path (e.g., 'contracts/MyConfidentialERC20.sol:MyConfidentialERC20.sol')")
+  .addParam("contract", "Full contract path (e.g., 'contracts/CondidentialProcurement.sol:CondidentialProcurement.sol')")
   .addParam("args", "Constructor arguments as comma-separated values", "")
   .setAction(async (taskArgs, hre) => {
     if (hre.network.name === "hardhat") {
