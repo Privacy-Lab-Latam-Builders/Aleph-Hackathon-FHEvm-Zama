@@ -55,7 +55,7 @@ const SubmitForm: React.FC = () => {
 
   return (
     <div style={{ maxWidth: '400px', margin: '0 auto', padding: '20px', border: '1px solid #ccc' }}>
-      <h1>Submit Form</h1>
+      <h1>Submit Bid</h1>
       <form onSubmit={handleSubmit}>
         {/* Text input field */}
         <div style={{ marginBottom: '10px' }}>
