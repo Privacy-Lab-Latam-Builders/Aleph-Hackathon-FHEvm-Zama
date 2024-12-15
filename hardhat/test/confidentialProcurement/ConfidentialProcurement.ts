@@ -1,7 +1,7 @@
 import { expect } from "chai";
 
 import { createInstance } from "../instance";
-import { reencryptEuint64 } from "../reencrypt";
+// import { reencryptEuint256 } from "../reencrypt";
 import { getSigners, initSigners } from "../signers";
 import { deployConfidentialProcurementFixture } from "./ConfidentialProcurement.fixture";
 
@@ -18,55 +18,46 @@ describe("ConfidentialProcurement", function () {
     this.fhevm = await createInstance();
   });
 
-  it("should select winner with lowest price and valid compliance", async function () {
+  it("should select winner with lowest price", async function () {
     // Create encrypted bids
     const bidder1Input = this.fhevm.createEncryptedInput(this.contractAddress, this.signers.bob.address);
-    bidder1Input.add64(1000); // Price: 1000
+    await bidder1Input.add256(800); // Price: 800
     const encryptedPrice1 = await bidder1Input.encrypt();
-
-    const compliance1Input = this.fhevm.createEncryptedInput(this.contractAddress, this.signers.bob.address);
-    compliance1Input.addBool(true); // Has compliance
-    const encryptedCompliance1 = await compliance1Input.encrypt();
 
     // Submit first bid
     const tx1 = await this.procurement
       .connect(this.signers.bob)
       .submitBid(
         encryptedPrice1.handles[0],
-        encryptedCompliance1.handles[0],
         encryptedPrice1.inputProof,
-        encryptedCompliance1.inputProof,
       );
     await tx1.wait();
 
-    // Submit second bid with lower price but no compliance
+    // Submit second bid with lower price
     const bidder2Input = this.fhevm.createEncryptedInput(this.contractAddress, this.signers.carol.address);
-    bidder2Input.add64(800);
+    await bidder2Input.add256(1000);
     const encryptedPrice2 = await bidder2Input.encrypt();
 
-    const compliance2Input = this.fhevm.createEncryptedInput(this.contractAddress, this.signers.carol.address);
-    compliance2Input.addBool(false);
-    const encryptedCompliance2 = await compliance2Input.encrypt();
 
     const tx2 = await this.procurement
       .connect(this.signers.carol)
       .submitBid(
         encryptedPrice2.handles[0],
-        encryptedCompliance2.handles[0],
         encryptedPrice2.inputProof,
-        encryptedCompliance2.inputProof,
       );
     await tx2.wait();
 
-    // Evaluate bids
-    const evalTx = await this.procurement.requestEvaluation();
-    await evalTx.wait();
+    // Decrypt winner
+      const evalTx = await this.procurement.decryptWinner();
+      await evalTx.wait();
 
-    // Get and verify results
-    const result = await this.procurement.results();
-    const winnerPrice = await reencryptEuint64(this.signers.bob, this.fhevm, result.lowestPrice, this.contractAddress);
+    // Decrypt Lowest Price
+      const evalTx1 = await this.procurement.decryptLowestPrice();
+      await evalTx1.wait();
 
-    expect(result.winner).to.equal(this.signers.bob.address);
-    expect(winnerPrice).to.equal(1000);
+      // const winnerPrice = await reencryptEuint256(this.signers.bob, this.fhevm, this.lowestPrice, this.contractAddress);
+
+    expect(await this.procurement.decryptedWinner()).to.equal(this.signers.bob.address);
+    expect(await this.procurement.decryptedLowestPrice()).to.equal(1000);
   });
 });
