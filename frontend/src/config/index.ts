@@ -18,4 +18,3 @@ export const config = getDefaultConfig({
     chains: [sepolia],
     ssr: true, // If your dApp uses server side rendering (SSR)
   });
-  

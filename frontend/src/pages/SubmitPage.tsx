@@ -1,6 +1,8 @@
 import React, { useState, FormEvent } from 'react';
 import { useWalletClient } from 'wagmi';
 import { getConproContract } from '../utils';
+import { createInstance as createFhevmInstance } from 'fhevmjs';
+import { CONFIDENTIAL_PRODUCREMENT_CONTRACT_ADDRESS } from '../constants';
 
 // Define the interface for the form data
 interface FormData {
@@ -18,7 +20,7 @@ const SubmitForm: React.FC = () => {
   // Error message state
   const [error, setError] = useState<string>('');
 
-  const {data: walletClient} = useWalletClient();
+  const { data: walletClient } = useWalletClient();
 
   // Handle input text change
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,9 +53,30 @@ const SubmitForm: React.FC = () => {
     }
 
     const conproContract = getConproContract(walletClient);
-    
+
+    const fhevmInstance = await createFhevmInstance({
+      network: window.ethereum,
+      gatewayUrl: process.env.VITE_GATEWAY_URL,
+      aclContractAddress: process.env.VITE_ACL_ADDRESS,
+      kmsContractAddress: process.env.VITE_KMS_ADDRESS,
+    });
+
     try {
-      await conproContract.write.submitBid([formData.price, formData.isExperience]);
+      const input1 = fhevmInstance.createEncryptedInput(
+        CONFIDENTIAL_PRODUCREMENT_CONTRACT_ADDRESS,
+        walletClient.account.address,
+      );
+
+      input1.add256(formData.price);
+
+      const input2 = fhevmInstance.createEncryptedInput(
+        CONFIDENTIAL_PRODUCREMENT_CONTRACT_ADDRESS,
+        walletClient.account.address,
+      );
+
+      input2.addBool(Boolean(formData.isExperience));
+
+      await conproContract.write.submitBid([input1, input2]);
       setError('');
       alert('Form submitted successfully!');
     } catch (error) {
@@ -69,7 +92,14 @@ const SubmitForm: React.FC = () => {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '0 auto', padding: '20px', border: '1px solid #ccc' }}>
+    <div
+      style={{
+        maxWidth: '400px',
+        margin: '0 auto',
+        padding: '20px',
+        border: '1px solid #ccc',
+      }}
+    >
       <h1>Submit Bid</h1>
       <form onSubmit={handleSubmit}>
         {/* Text input field */}
@@ -88,7 +118,9 @@ const SubmitForm: React.FC = () => {
 
         {/* Radio button options */}
         <div style={{ marginBottom: '10px' }}>
-          <label>Do the entity experience in similar projects in the past?:</label>
+          <label>
+            Do you have previous experience in similar projects?:
+          </label>
           <div>
             <label style={{ marginRight: '10px' }}>
               <input
