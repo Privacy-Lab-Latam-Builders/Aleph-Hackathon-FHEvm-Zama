@@ -1,4 +1,9 @@
 ```mermaid
+%%{
+  init: {
+    'theme': 'dark'
+  }
+}%%
 classDiagram
     class dApp {
         +submitBid(bidData)
