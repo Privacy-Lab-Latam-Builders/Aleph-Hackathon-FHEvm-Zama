@@ -1,4 +1,9 @@
 ```mermaid
+%%{
+  init: {
+    'theme': 'dark'
+  }
+}%%
 flowchart TD
     Start --> SubmitBid[Submit Encrypted Bid via dApp]
     SubmitBid --> GenerateZKP[Generate ZKP to Prove Bid Correctness]
