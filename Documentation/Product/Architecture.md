@@ -1,4 +1,9 @@
 ```mermaid
+%%{
+  init: {
+    'theme': 'dark'
+  }
+}%%
 graph TD
     A(dApp) --> B(Smart Contract)
     A --> C(Bidder Wallet)
