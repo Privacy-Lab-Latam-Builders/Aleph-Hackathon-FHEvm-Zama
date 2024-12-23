@@ -1,4 +1,9 @@
 ```mermaid
+%%{
+  init: {
+    'theme': 'dark'
+  }
+}%%
 flowchart TD
     R[Requester] --> UC1[Create Procurement Process]
     R --> UC2[Test Smart Contract]
