@@ -1,4 +1,9 @@
 ```mermaid
+%%{
+  init: {
+    'theme': 'dark'
+  }
+}%%
 sequenceDiagram
     participant Bidder
     participant dApp
